@@ -11,7 +11,7 @@ body {
 main {
   display: block; }
 
-.table-wrapper table {
-  text-align: right; }
-  .table-wrapper table td {
-    width: 50px; }
+.table-wrapper table td {
+  width: 50px; }
+  .table-wrapper table td.r {
+    text-align: right; }

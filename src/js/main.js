@@ -20,105 +20,124 @@ class S {
   }
 }
 
-// Wythoff配列取得用
-class Wythoff {
-  constructor() {
-    this.arr = [[1, 2]];
-    this.s = new S();
-  }
+// // Wythoff配列取得用
+// class Wythoff {
+//   constructor() {
+//     this.arr = [[1, 1]];
+//     this.s = new S();
+//   }
 
-  get(y, x) {
-    if(this.arr[y] && this.arr[y][x]) {
-      return this.arr[y][x];
-    } else if(this.arr[y]) {
-      return this.get(y, x - 1) + this.get(y, x - 2);
-    } else {
-      this.arr[y] = [this.get(y - 1, 0) + (this.s.get(y - 1) === '1' ? 3 : 2), this.get(y - 1, 1) + (this.s.get(y - 1) === '1' ? 5 : 3)];
-      return this.get(y, x);
-    }
-  }
-}
+//   get(y, x) {
+//     if(this.arr[y] && this.arr[y][x]) {
+//       return this.arr[y][x];
+//     } else if(this.arr[y]) {
+//       return this.get(y, x - 1) + this.get(y, x - 2);
+//     } else {
+//       this.arr[y] = [this.get(y - 1, 0) + (this.s.get(y - 1) === '1' ? 3 : 2), this.get(y - 1, 1) + (this.s.get(y - 1) === '1' ? 5 : 3)];
+//       return this.get(y, x);
+//     }
+//   }
+// }
 
-class GoldenRatio {
-  constructor() {
-  }
+// class GoldenRatio {
+//   constructor() {
+//   }
 
-  find(n) {
-    var tbl = [];
+//   find(n) {
+//     var tbl = [];
 
-    for(let y = 0; y < n; y++) {
-      tbl[y] = [];
-      let xMax = n;
-      for(let x = 0; x < xMax; x++) {
-        let tmp = wythoff.get(y, x);
-        tbl[y][x] = tmp;
-        if(tmp === n) {
-          tbl[y][x + 1] = wythoff.get(y, x + 1);
-          return {
-            table: tbl,
-            coord: [y, x],
-          }
-        } else if(tmp > n) {
-          xMax = Math.min(xMax, x);
-          break;
-        }
-      }
-    }
-  }
-}
+//     for(let y = 0; y < n; y++) {
+//       tbl[y] = [];
+//       let xMax = n;
+//       for(let x = 0; x < xMax; x++) {
+//         let tmp = wythoff.get(y, x);
+//         tbl[y][x] = tmp;
+//         if(tmp === n) {
+//           tbl[y][x + 1] = wythoff.get(y, x + 1);
+//           return {
+//             table: tbl,
+//             coord: [y, x],
+//           }
+//         } else if(tmp > n) {
+//           xMax = Math.min(xMax, x);
+//           break;
+//         }
+//       }
+//     }
+//   }
+// }
 
 class Main {
   constructor() {
     $(() => {
       this.$output = $('.table-wrapper');
-      wythoff = new Wythoff();
-      goldenRatio = new GoldenRatio();
+      // wythoff = new Wythoff();
+      // goldenRatio = new GoldenRatio();
+
+      var $table = $('<table></table>');
+
+      this.$output.append(`<p>${φ}</p>`);
+      this.$output.append(`<p>${φ.toString(2)}</p>`);
+
+      this.$output.append($table);
+
+      $table.append(`
+<tr style="text-align: center;">
+  <td>w1</td>
+  <td>w2</td>
+  <td>w3</td>
+  <td>w3 / w2</td>
+  <td>binary</td>
+</tr>
+      `);
 
       var n = 1024;
+      var s = new S();
 
-      var res = goldenRatio.find(n);
-      var coord = res.coord;
-      var intVal = wythoff.get(coord[0], coord[1] + 1);
-      var val = intVal / n;
+      var w1 = [1];
+      var w2 = [1];
 
-      this.$output.append($(`<p>座標: ${coord}</p>`));
-      this.$output.append($(`<p>黄金比2進表記: ${φ.toString(2)}</p>`));
-      this.$output.append($(`<p>結果2進表記: ${intVal.toString(2)}</p>`));
-      this.$output.append($(`<p>黄金比: ${φ}</p>`));
-      this.$output.append($(`<p>近似値: ${val}</p>`));
-      this.render(res.table);
-    });
-  }
+      for(let i = 1; i < 1000000; i++) {
+        let tmp = s.get(i - 1);
+        let val1 = w1[i - 1] + ( tmp === '1' ? 2 : 1);
+        let val2 = w2[i - 1] + ( tmp === '1' ? 3 : 2);
+        let val3 = val1 + val2;
 
-  render(tbl) {
-    var $table = $('<table>');
+        w1[i] = val1;
+        w2[i] = val2;
 
-    // 結果太字表示用
-    var $lastCell = $();
-
-    for(let y = 0; y < tbl.length; y++) {
-      let $tr = $('<tr>');
-
-      for(let x = 0; x < tbl[0].length; x++) {
-        let val = tbl[y][x];
-        let $td = $('<td>');
-        $td.text(val || '');
-        $tr.append($td);
-
-        // lastX = x;
-        if(val) {
-          $lastCell = $td;
+        if(powMatch(val2)) {
+          let $row = $(`
+<tr>
+  <td class="r">${val1}</td>
+  <td class="r">${val2}</td>
+  <td class="r">${val3}</td>
+  <td>${val3 / val2}</td>
+  <td>${val3.toString(2)}</td>
+</tr>
+          `);
+          $table.append($row);
         }
       }
 
-      $table.append($tr);
-    }
+      console.log('done');
 
-    $lastCell.css({
-      "font-weight": 'bold',
+      function powMatch(n) {
+        return n.toString(2).match(/^1(0*)$/);
+      }
+
+      // var res = goldenRatio.find(n);
+      // var coord = res.coord;
+      // var intVal = wythoff.get(coord[0], coord[1] + 1);
+      // var val = intVal / n;
+
+      // this.$output.append($(`<p>座標: ${coord}</p>`));
+      // this.$output.append($(`<p>黄金比2進表記: ${φ.toString(2)}</p>`));
+      // this.$output.append($(`<p>結果2進表記: ${intVal.toString(2)}</p>`));
+      // this.$output.append($(`<p>黄金比: ${φ}</p>`));
+      // this.$output.append($(`<p>近似値: ${val}</p>`));
+      // this.render(res.table);
     });
-
-    this.$output.append($table);
   }
 }
 
