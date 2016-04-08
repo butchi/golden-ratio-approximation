@@ -1,3 +1,8 @@
+var wythoff;
+var goldenRatio;
+
+const φ = (1 + Math.sqrt(5)) / 2;
+
 // フィボナッチ列取得用
 class S {
   constructor() {
@@ -34,18 +39,13 @@ class Wythoff {
   }
 }
 
-// class GoldenRatio {
-//   constructor() {
-//   }
-// }
+class GoldenRatio {
+  constructor() {
+  }
 
-$(() => {
-  var $output = $('.table-wrapper');
-  var tbl = [];
+  find(n) {
+    var tbl = [];
 
-  var wythoff = new Wythoff();
-
-  function find(n) {
     for(let y = 0; y < n; y++) {
       tbl[y] = [];
       let xMax = n;
@@ -54,7 +54,10 @@ $(() => {
         tbl[y][x] = tmp;
         if(tmp === n) {
           tbl[y][x + 1] = wythoff.get(y, x + 1);
-          return [y, x];
+          return {
+            table: tbl,
+            coord: [y, x],
+          }
         } else if(tmp > n) {
           xMax = Math.min(xMax, x);
           break;
@@ -62,14 +65,32 @@ $(() => {
       }
     }
   }
+}
 
-  function getGoldenRatio(n) {
-    var [y, x] = find(n);
+class Main {
+  constructor() {
+    $(() => {
+      this.$output = $('.table-wrapper');
+      wythoff = new Wythoff();
+      goldenRatio = new GoldenRatio();
 
-    return wythoff.get(y, x + 1) / n;
+      var n = 1024;
+
+      var res = goldenRatio.find(n);
+      var coord = res.coord;
+      var intVal = wythoff.get(coord[0], coord[1] + 1);
+      var val = intVal / n;
+
+      this.$output.append($(`<p>座標: ${coord}</p>`));
+      this.$output.append($(`<p>黄金比2進表記: ${φ.toString(2)}</p>`));
+      this.$output.append($(`<p>結果2進表記: ${intVal.toString(2)}</p>`));
+      this.$output.append($(`<p>黄金比: ${φ}</p>`));
+      this.$output.append($(`<p>近似値: ${val}</p>`));
+      this.render(res.table);
+    });
   }
 
-  function render() {
+  render(tbl) {
     var $table = $('<table>');
 
     // 結果太字表示用
@@ -97,11 +118,11 @@ $(() => {
       "font-weight": 'bold',
     });
 
-    $output.append($table);
+    this.$output.append($table);
   }
+}
 
-  var φ = (1 + Math.sqrt(5)) / 2;
-
-  getGoldenRatio(1024);
-  render();
-});
+window.licker = window.licker || {};
+((ns) => {
+  ns.main = new Main();
+})(window.licker);

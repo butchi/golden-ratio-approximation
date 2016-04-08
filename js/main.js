@@ -1,11 +1,14 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var wythoff;
+var goldenRatio;
+
+var φ = (1 + Math.sqrt(5)) / 2;
 
 // フィボナッチ列取得用
 
@@ -63,82 +66,107 @@ var Wythoff = function () {
   return Wythoff;
 }();
 
-// class GoldenRatio {
-//   constructor() {
-//   }
-// }
+var GoldenRatio = function () {
+  function GoldenRatio() {
+    _classCallCheck(this, GoldenRatio);
+  }
 
-$(function () {
-  var $output = $('.table-wrapper');
-  var tbl = [];
+  _createClass(GoldenRatio, [{
+    key: 'find',
+    value: function find(n) {
+      var tbl = [];
 
-  var wythoff = new Wythoff();
-
-  function find(n) {
-    for (var y = 0; y < n; y++) {
-      tbl[y] = [];
-      var xMax = n;
-      for (var x = 0; x < xMax; x++) {
-        var tmp = wythoff.get(y, x);
-        tbl[y][x] = tmp;
-        if (tmp === n) {
-          tbl[y][x + 1] = wythoff.get(y, x + 1);
-          return [y, x];
-        } else if (tmp > n) {
-          xMax = Math.min(xMax, x);
-          break;
+      for (var y = 0; y < n; y++) {
+        tbl[y] = [];
+        var xMax = n;
+        for (var x = 0; x < xMax; x++) {
+          var tmp = wythoff.get(y, x);
+          tbl[y][x] = tmp;
+          if (tmp === n) {
+            tbl[y][x + 1] = wythoff.get(y, x + 1);
+            return {
+              table: tbl,
+              coord: [y, x]
+            };
+          } else if (tmp > n) {
+            xMax = Math.min(xMax, x);
+            break;
+          }
         }
       }
     }
-  }
+  }]);
 
-  function getGoldenRatio(n) {
-    var _find = find(n);
+  return GoldenRatio;
+}();
 
-    var _find2 = _slicedToArray(_find, 2);
+var Main = function () {
+  function Main() {
+    var _this = this;
 
-    var y = _find2[0];
-    var x = _find2[1];
+    _classCallCheck(this, Main);
 
+    $(function () {
+      _this.$output = $('.table-wrapper');
+      wythoff = new Wythoff();
+      goldenRatio = new GoldenRatio();
 
-    return wythoff.get(y, x + 1) / n;
-  }
+      var n = 1024;
 
-  function render() {
-    var $table = $('<table>');
+      var res = goldenRatio.find(n);
+      var coord = res.coord;
+      var intVal = wythoff.get(coord[0], coord[1] + 1);
+      var val = intVal / n;
 
-    // 結果太字表示用
-    var $lastCell = $();
-
-    for (var y = 0; y < tbl.length; y++) {
-      var $tr = $('<tr>');
-
-      for (var x = 0; x < tbl[0].length; x++) {
-        var val = tbl[y][x];
-        var $td = $('<td>');
-        $td.text(val || '');
-        $tr.append($td);
-
-        // lastX = x;
-        if (val) {
-          $lastCell = $td;
-        }
-      }
-
-      $table.append($tr);
-    }
-
-    $lastCell.css({
-      "font-weight": 'bold'
+      _this.$output.append($('<p>座標: ' + coord + '</p>'));
+      _this.$output.append($('<p>黄金比2進表記: ' + φ.toString(2) + '</p>'));
+      _this.$output.append($('<p>結果2進表記: ' + intVal.toString(2) + '</p>'));
+      _this.$output.append($('<p>黄金比: ' + φ + '</p>'));
+      _this.$output.append($('<p>近似値: ' + val + '</p>'));
+      _this.render(res.table);
     });
-
-    $output.append($table);
   }
 
-  var φ = (1 + Math.sqrt(5)) / 2;
+  _createClass(Main, [{
+    key: 'render',
+    value: function render(tbl) {
+      var $table = $('<table>');
 
-  getGoldenRatio(1024);
-  render();
-});
+      // 結果太字表示用
+      var $lastCell = $();
+
+      for (var y = 0; y < tbl.length; y++) {
+        var $tr = $('<tr>');
+
+        for (var x = 0; x < tbl[0].length; x++) {
+          var val = tbl[y][x];
+          var $td = $('<td>');
+          $td.text(val || '');
+          $tr.append($td);
+
+          // lastX = x;
+          if (val) {
+            $lastCell = $td;
+          }
+        }
+
+        $table.append($tr);
+      }
+
+      $lastCell.css({
+        "font-weight": 'bold'
+      });
+
+      this.$output.append($table);
+    }
+  }]);
+
+  return Main;
+}();
+
+window.licker = window.licker || {};
+(function (ns) {
+  ns.main = new Main();
+})(window.licker);
 
 },{}]},{},[1]);
