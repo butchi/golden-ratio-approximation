@@ -1,3 +1,4 @@
+// フィボナッチ列取得用
 class S {
   constructor() {
     this.strPrev = '1';
@@ -14,6 +15,7 @@ class S {
   }
 }
 
+// Wythoff配列取得用
 class Wythoff {
   constructor() {
     this.arr = [[1, 2]];
@@ -32,26 +34,32 @@ class Wythoff {
   }
 }
 
+// class GoldenRatio {
+//   constructor() {
+//   }
+// }
+
 $(() => {
-  var $tbl = $('.wythoff-array');
+  var $output = $('.table-wrapper');
+  var tbl = [];
 
   var wythoff = new Wythoff();
 
   function find(n) {
     for(let y = 0; y < n; y++) {
+      tbl[y] = [];
       let xMax = n;
-      $tbl.text($tbl.text() + (y + ': ________').slice(0, 6));
       for(let x = 0; x < xMax; x++) {
-        $tbl.text($tbl.text() + ('________' + wythoff.get(y, x)).slice(-8));
-        if(wythoff.get(y, x) === n) {
-          $tbl.text($tbl.text() + '\n\n');
+        let tmp = wythoff.get(y, x);
+        tbl[y][x] = tmp;
+        if(tmp === n) {
+          tbl[y][x + 1] = wythoff.get(y, x + 1);
           return [y, x];
-        } else if(wythoff.get(y, x) > n) {
+        } else if(tmp > n) {
           xMax = Math.min(xMax, x);
           break;
         }
       }
-      $tbl.text($tbl.text() + '\n');
     }
   }
 
@@ -61,9 +69,39 @@ $(() => {
     return wythoff.get(y, x + 1) / n;
   }
 
+  function render() {
+    var $table = $('<table>');
+
+    // 結果太字表示用
+    var $lastCell = $();
+
+    for(let y = 0; y < tbl.length; y++) {
+      let $tr = $('<tr>');
+
+      for(let x = 0; x < tbl[0].length; x++) {
+        let val = tbl[y][x];
+        let $td = $('<td>');
+        $td.text(val || '');
+        $tr.append($td);
+
+        // lastX = x;
+        if(val) {
+          $lastCell = $td;
+        }
+      }
+
+      $table.append($tr);
+    }
+
+    $lastCell.css({
+      "font-weight": 'bold',
+    });
+
+    $output.append($table);
+  }
+
   var φ = (1 + Math.sqrt(5)) / 2;
 
-  console.log(getGoldenRatio(1024), φ);
-
-  console.log(getGoldenRatio(Math.pow(2, 8)).toString(2), φ.toString(2));
+  getGoldenRatio(1024);
+  render();
 });

@@ -10,3 +10,8 @@ body {
 
 main {
   display: block; }
+
+.table-wrapper table {
+  text-align: right; }
+  .table-wrapper table td {
+    width: 50px; }

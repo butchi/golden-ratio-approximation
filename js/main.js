@@ -7,6 +7,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+// フィボナッチ列取得用
+
 var S = function () {
   function S() {
     _classCallCheck(this, S);
@@ -33,6 +35,9 @@ var S = function () {
   return S;
 }();
 
+// Wythoff配列取得用
+
+
 var Wythoff = function () {
   function Wythoff() {
     _classCallCheck(this, Wythoff);
@@ -58,26 +63,32 @@ var Wythoff = function () {
   return Wythoff;
 }();
 
+// class GoldenRatio {
+//   constructor() {
+//   }
+// }
+
 $(function () {
-  var $tbl = $('.wythoff-array');
+  var $output = $('.table-wrapper');
+  var tbl = [];
 
   var wythoff = new Wythoff();
 
   function find(n) {
     for (var y = 0; y < n; y++) {
+      tbl[y] = [];
       var xMax = n;
-      $tbl.text($tbl.text() + (y + ': ________').slice(0, 6));
       for (var x = 0; x < xMax; x++) {
-        $tbl.text($tbl.text() + ('________' + wythoff.get(y, x)).slice(-8));
-        if (wythoff.get(y, x) === n) {
-          $tbl.text($tbl.text() + '\n\n');
+        var tmp = wythoff.get(y, x);
+        tbl[y][x] = tmp;
+        if (tmp === n) {
+          tbl[y][x + 1] = wythoff.get(y, x + 1);
           return [y, x];
-        } else if (wythoff.get(y, x) > n) {
+        } else if (tmp > n) {
           xMax = Math.min(xMax, x);
           break;
         }
       }
-      $tbl.text($tbl.text() + '\n');
     }
   }
 
@@ -93,11 +104,41 @@ $(function () {
     return wythoff.get(y, x + 1) / n;
   }
 
+  function render() {
+    var $table = $('<table>');
+
+    // 結果太字表示用
+    var $lastCell = $();
+
+    for (var y = 0; y < tbl.length; y++) {
+      var $tr = $('<tr>');
+
+      for (var x = 0; x < tbl[0].length; x++) {
+        var val = tbl[y][x];
+        var $td = $('<td>');
+        $td.text(val || '');
+        $tr.append($td);
+
+        // lastX = x;
+        if (val) {
+          $lastCell = $td;
+        }
+      }
+
+      $table.append($tr);
+    }
+
+    $lastCell.css({
+      "font-weight": 'bold'
+    });
+
+    $output.append($table);
+  }
+
   var φ = (1 + Math.sqrt(5)) / 2;
 
-  console.log(getGoldenRatio(1024), φ);
-
-  console.log(getGoldenRatio(Math.pow(2, 8)).toString(2), φ.toString(2));
+  getGoldenRatio(1024);
+  render();
 });
 
 },{}]},{},[1]);
