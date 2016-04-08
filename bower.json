@@ -1,0 +1,26 @@
+{
+  "name": "golden-ratio-approximation",
+  "version": "0.1.0",
+  "description": "golden ratio approximation",
+  "main": "js/main.min.js",
+  "authors": [
+    "IWABUCHI Yuuki"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "golden ratio"
+  ],
+  "moduleType": [],
+  "homepage": "http://butchi.jp/",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "jquery": "~2.2.2",
+    "lodash": "~4.7.0"
+  }
+}
