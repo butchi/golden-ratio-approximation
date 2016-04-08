@@ -38,53 +38,6 @@ var S = function () {
   return S;
 }();
 
-// // Wythoff配列取得用
-// class Wythoff {
-//   constructor() {
-//     this.arr = [[1, 1]];
-//     this.s = new S();
-//   }
-
-//   get(y, x) {
-//     if(this.arr[y] && this.arr[y][x]) {
-//       return this.arr[y][x];
-//     } else if(this.arr[y]) {
-//       return this.get(y, x - 1) + this.get(y, x - 2);
-//     } else {
-//       this.arr[y] = [this.get(y - 1, 0) + (this.s.get(y - 1) === '1' ? 3 : 2), this.get(y - 1, 1) + (this.s.get(y - 1) === '1' ? 5 : 3)];
-//       return this.get(y, x);
-//     }
-//   }
-// }
-
-// class GoldenRatio {
-//   constructor() {
-//   }
-
-//   find(n) {
-//     var tbl = [];
-
-//     for(let y = 0; y < n; y++) {
-//       tbl[y] = [];
-//       let xMax = n;
-//       for(let x = 0; x < xMax; x++) {
-//         let tmp = wythoff.get(y, x);
-//         tbl[y][x] = tmp;
-//         if(tmp === n) {
-//           tbl[y][x + 1] = wythoff.get(y, x + 1);
-//           return {
-//             table: tbl,
-//             coord: [y, x],
-//           }
-//         } else if(tmp > n) {
-//           xMax = Math.min(xMax, x);
-//           break;
-//         }
-//       }
-//     }
-//   }
-// }
-
 var Main = function Main() {
   var _this = this;
 
@@ -97,30 +50,26 @@ var Main = function Main() {
 
     var $table = $('<table></table>');
 
-    _this.$output.append('<p>' + φ + '</p>');
-    _this.$output.append('<p>' + φ.toString(2) + '</p>');
+    _this.$output.append('<p>' + (φ - 1) + '</p>');
+    _this.$output.append('<p>' + (φ - 1).toString(2) + '</p>');
 
     _this.$output.append($table);
 
-    $table.append('\n<tr style="text-align: center;">\n  <td>w1</td>\n  <td>w2</td>\n  <td>w3</td>\n  <td>w3 / w2</td>\n  <td>binary</td>\n</tr>\n      ');
+    $table.append('\n<tr style="text-align: center;">\n  <td>n</td>\n  <td>val</td>\n  <td>val / n</td>\n  <td>n (binary)</td>\n</tr>\n      ');
 
     var n = 1024;
     var s = new S();
 
-    var w1 = [1];
-    var w2 = [1];
+    var w = [0];
 
-    for (var i = 1; i < 1000000; i++) {
-      var tmp = s.get(i - 1);
-      var val1 = w1[i - 1] + (tmp === '1' ? 2 : 1);
-      var val2 = w2[i - 1] + (tmp === '1' ? 3 : 2);
-      var val3 = val1 + val2;
+    for (var i = 0; i < 10000000; i++) {
+      var tmp = s.get(i);
+      var val = w[i] + (tmp === '1' ? 2 : 1);
 
-      w1[i] = val1;
-      w2[i] = val2;
+      w[i + 1] = val;
 
-      if (powMatch(val2)) {
-        var $row = $('\n<tr>\n  <td class="r">' + val1 + '</td>\n  <td class="r">' + val2 + '</td>\n  <td class="r">' + val3 + '</td>\n  <td>' + val3 / val2 + '</td>\n  <td>' + val3.toString(2) + '</td>\n</tr>\n          ');
+      if (powMatch(val)) {
+        var $row = $('\n<tr>\n  <td class="r">' + i + '</td>\n  <td class="r">' + val + '</td>\n  <td>' + i / val + '</td>\n  <td>' + i.toString(2) + '</td>\n</tr>\n          ');
         $table.append($row);
       }
     }
