@@ -55,21 +55,24 @@ var Main = function Main() {
 
     _this.$output.append($table);
 
-    $table.append('\n<tr style="text-align: center;">\n  <td>n</td>\n  <td>val</td>\n  <td>val / n</td>\n  <td>n (binary)</td>\n</tr>\n      ');
+    $table.append('\n<tr style="text-align: center;">\n  <td>n</td>\n  <td>val</td>\n  <td>val / n</td>\n  <td>val (binary)</td>\n</tr>\n      ');
 
     var n = 1024;
     var s = new S();
 
-    var w = [0];
+    var w = [1];
 
     for (var i = 0; i < 10000000; i++) {
       var tmp = s.get(i);
-      var val = w[i] + (tmp === '1' ? 2 : 1);
+      var val = w[i];
+      if (tmp === '1') {
+        val++;
+      }
 
       w[i + 1] = val;
 
-      if (powMatch(val)) {
-        var $row = $('\n<tr>\n  <td class="r">' + i + '</td>\n  <td class="r">' + val + '</td>\n  <td>' + i / val + '</td>\n  <td>' + i.toString(2) + '</td>\n</tr>\n          ');
+      if (powMatch(i + 1)) {
+        var $row = $('\n<tr>\n  <td class="r">' + (i + 1) + '</td>\n  <td class="r">' + val + '</td>\n  <td>' + val / (i + 1) + '</td>\n  <td>' + val.toString(2) + '</td>\n</tr>\n          ');
         $table.append($row);
       }
     }

@@ -39,28 +39,31 @@ class Main {
   <td>n</td>
   <td>val</td>
   <td>val / n</td>
-  <td>n (binary)</td>
+  <td>val (binary)</td>
 </tr>
       `);
 
       var n = 1024;
       var s = new S();
 
-      var w = [0];
+      var w = [1];
 
       for(let i = 0; i < 10000000; i++) {
         let tmp = s.get(i);
-        let val = w[i] + ( tmp === '1' ? 2 : 1);
+        let val = w[i];
+        if(tmp === '1') {
+          val++;
+        }
 
         w[i + 1] = val;
 
-        if(powMatch(val)) {
+        if(powMatch(i + 1)) {
           let $row = $(`
 <tr>
-  <td class="r">${i}</td>
+  <td class="r">${i + 1}</td>
   <td class="r">${val}</td>
-  <td>${i / val}</td>
-  <td>${i.toString(2)}</td>
+  <td>${val / (i + 1)}</td>
+  <td>${val.toString(2)}</td>
 </tr>
           `);
           $table.append($row);
